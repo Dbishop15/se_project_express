@@ -1,4 +1,5 @@
 const ClothingItem = require("../models/clothingItem");
+
 const { handleError } = require("../utils/errors");
 
 const createItem = (req, res) => {
@@ -6,8 +7,9 @@ const createItem = (req, res) => {
   console.log(req.body);
 
   const { name, weather, imageURL } = req.body;
+  const owner = req.user._id;
 
-  ClothingItem.create({ name: name, weather: weather, imageURL: imageURL })
+  ClothingItem.create({ name, weather, imageURL, owner })
     .then((item) => {
       console.log(item);
       res.send({ data: item });
