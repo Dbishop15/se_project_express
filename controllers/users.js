@@ -24,7 +24,7 @@ const getUsers = (req, res) => {
 };
 
 const getUser = (req, res) => {
-  const { userId } = req.params;
+  const { _id: userId } = req.user;
 
   User.findById(userId)
     .orFail()
@@ -36,10 +36,10 @@ const getUser = (req, res) => {
       }
     })
     .catch((err) => {
-      if (err.name === "ValidationError") {
+      if (err.name === "CastError") {
         res
           .status(INVALID_DATA_ERROR.error)
-          .send({ message: "Invalid data provided" });
+          .send({ message: "Invalid user ID" });
       } else {
         res
           .status(DEFAULT_ERROR.error)
