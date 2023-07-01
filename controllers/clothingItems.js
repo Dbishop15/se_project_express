@@ -1,6 +1,10 @@
 const ClothingItem = require("../models/clothingItem");
 
-const { handleError } = require("../utils/errors");
+const {
+  INVALID_DATA_ERROR,
+  NOTFOUND_ERROR,
+  DEFAULT_ERROR,
+} = require("../utils/errors");
 
 const createItem = (req, res) => {
   console.log(req);
@@ -15,15 +19,25 @@ const createItem = (req, res) => {
       res.send({ data: item });
     })
     .catch((err) => {
-      handleError(req, res, err);
+      if (err.name === "ValidationError") {
+        res
+          .status(INVALID_DATA_ERROR.error)
+          .send({ message: "Invalid data provided" });
+      } else {
+        res
+          .status(DEFAULT_ERROR.error)
+          .send({ message: "An error has occured on the server" });
+      }
     });
 };
 
 const getItems = (req, res) => {
   ClothingItem.find({})
     .then((items) => res.status(200).send(items))
-    .catch((err) => {
-      handleError(req, res, err);
+    .catch(() => {
+      res
+        .status(DEFAULT_ERROR.error)
+        .send({ message: "An error has occured on the server" });
     });
 };
 
@@ -35,7 +49,15 @@ const updateItem = (req, res) => {
     .orFail()
     .then((item) => res.status(200).send({ data: item }))
     .catch((err) => {
-      handleError(req, res, err);
+      if (err.name === "ValidationError") {
+        res
+          .status(INVALID_DATA_ERROR.error)
+          .send({ message: "Invalid data provided" });
+      } else {
+        res
+          .status(DEFAULT_ERROR.error)
+          .send({ message: "An error has occured on the server" });
+      }
     });
 };
 
@@ -46,7 +68,15 @@ const deleteItem = (req, res) => {
     .orFail()
     .then(() => res.status(200).send({ message: "Successfully deleted" }))
     .catch((err) => {
-      handleError(req, res, err);
+      if (err.name === "ValidationError") {
+        res
+          .status(INVALID_DATA_ERROR.error)
+          .send({ message: "Invalid data provided" });
+      } else {
+        res
+          .status(DEFAULT_ERROR.error)
+          .send({ message: "An error has occured on the server" });
+      }
     });
 };
 
@@ -60,9 +90,23 @@ const likeItem = (req, res) => {
     { new: true }
   )
     .orFail()
-    .then((item) => res.status(200).send({ data: item }))
+    .then((item) => {
+      if (!item) {
+        res.status(NOTFOUND_ERROR.error).send({ message: "Item not found" });
+      } else {
+        res.send({ data: item });
+      }
+    })
     .catch((err) => {
-      handleError(req, res, err);
+      if (err.name === "CastError") {
+        res
+          .status(INVALID_DATA_ERROR.error)
+          .send({ message: "Invalid item ID" });
+      } else {
+        res
+          .status(DEFAULT_ERROR.error)
+          .send({ message: "An error has occured on the server" });
+      }
     });
 };
 
@@ -76,9 +120,23 @@ const dislikeItem = (req, res) => {
     { new: true }
   )
     .orFail()
-    .then((item) => res.status(200).send({ data: item }))
+    .then((item) => {
+      if (!item) {
+        res.status(NOTFOUND_ERROR.error).send({ message: "Item not found" });
+      } else {
+        res.send({ data: item });
+      }
+    })
     .catch((err) => {
-      handleError(req, res, err);
+      if (err.name === "CastError") {
+        res
+          .status(INVALID_DATA_ERROR.error)
+          .send({ message: "Invalid item ID" });
+      } else {
+        res
+          .status(DEFAULT_ERROR.error)
+          .send({ message: "An error has occured on the server" });
+      }
     });
 };
 
