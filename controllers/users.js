@@ -30,7 +30,7 @@ const getUser = (req, res) => {
       if (!user) {
         res.status(NOTFOUND_ERROR.error).send({ message: "User not found" });
       } else {
-        res.status(200).send({ data: user });
+        res.send({ data: user });
       }
     })
 

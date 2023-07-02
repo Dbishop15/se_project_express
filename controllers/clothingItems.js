@@ -15,7 +15,7 @@ const createItem = (req, res) => {
 
   ClothingItem.create({ name, weather, imageUrl, owner })
     .then((item) => {
-      res.status(200).send({ data: item });
+      res.send({ data: item });
     })
     .catch((err) => {
       if (err.name === "ValidationError") {
@@ -32,7 +32,7 @@ const createItem = (req, res) => {
 
 const getItems = (req, res) => {
   ClothingItem.find({})
-    .then((items) => res.status(200).send(items))
+    .then((items) => res.send(items))
     .catch(() => {
       res
         .status(DEFAULT_ERROR.error)
@@ -46,7 +46,7 @@ const updateItem = (req, res) => {
 
   ClothingItem.findByIdAndUpdate(itemId, { $set: { imageUrl } })
     .orFail()
-    .then((item) => res.status(200).send({ data: item }))
+    .then((item) => res.send({ data: item }))
     .catch((err) => {
       if (err.name === "ValidationError") {
         res
@@ -68,7 +68,7 @@ const deleteItem = (req, res) => {
       if (!item) {
         res.status(NOTFOUND_ERROR.error).send({ message: "Item not found" });
       } else {
-        res.status(200).send({ message: "Successfully deleted" });
+        res.send({ message: "Successfully deleted" });
       }
     })
     .catch((err) => {
@@ -94,7 +94,7 @@ const likeItem = (req, res) => {
       if (!item) {
         res.status(NOTFOUND_ERROR.error).send({ message: "Item not found" });
       } else {
-        res.status(200).send({ message: "Item liked" });
+        res.send({ message: "Item liked" });
       }
     })
     .catch((err) => {
@@ -120,7 +120,7 @@ const dislikeItem = (req, res) => {
       if (!item) {
         res.status(NOTFOUND_ERROR.error).send({ message: "Item not found" });
       } else {
-        res.status(200).send({ message: "Item disliked" });
+        res.send({ message: "Item disliked" });
       }
     })
     .catch((err) => {
