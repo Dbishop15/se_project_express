@@ -8,7 +8,6 @@ const {
 
 const getUsers = (req, res) => {
   User.find({})
-    .orFail()
     .then((users) => {
       if (!users) {
         res.status(NOTFOUND_ERROR.error).send({ message: "User not found" });
@@ -24,17 +23,17 @@ const getUsers = (req, res) => {
 };
 
 const getUser = (req, res) => {
-  const { _id: userId } = req.user;
+  const { userId } = req.params;
 
   User.findById(userId)
-    .orFail()
     .then((user) => {
       if (!user) {
         res.status(NOTFOUND_ERROR.error).send({ message: "User not found" });
       } else {
-        res.send({ data: user });
+        res.status(200).send({ data: user });
       }
     })
+
     .catch((err) => {
       if (err.name === "CastError") {
         res

@@ -10,10 +10,10 @@ const createItem = (req, res) => {
   console.log(req);
   console.log(req.body);
 
-  const { name, weather, imageURL } = req.body;
+  const { name, weather, imageUrl } = req.body;
   const owner = req.user._id;
 
-  ClothingItem.create({ name, weather, imageURL, owner })
+  ClothingItem.create({ name, weather, imageUrl, owner })
     .then((item) => {
       res.status(200).send({ data: item });
     })
@@ -42,9 +42,9 @@ const getItems = (req, res) => {
 
 const updateItem = (req, res) => {
   const { itemId } = req.params;
-  const { imageURL } = req.body;
+  const { imageUrl } = req.body;
 
-  ClothingItem.findByIdAndUpdate(itemId, { $set: { imageURL } })
+  ClothingItem.findByIdAndUpdate(itemId, { $set: { imageUrl } })
     .orFail()
     .then((item) => res.status(200).send({ data: item }))
     .catch((err) => {
@@ -64,13 +64,18 @@ const deleteItem = (req, res) => {
   const { itemId } = req.params;
 
   ClothingItem.findByIdAndDelete(itemId)
-    .orFail()
-    .then(() => res.status(200).send({ message: "Successfully deleted" }))
+    .then((item) => {
+      if (!item) {
+        res.status(NOTFOUND_ERROR.error).send({ message: "Item not found" });
+      } else {
+        res.status(200).send({ message: "Successfully deleted" });
+      }
+    })
     .catch((err) => {
-      if (err.name === "ValidationError") {
+      if (err.name === "CastError") {
         res
           .status(INVALID_DATA_ERROR.error)
-          .send({ message: "Invalid data provided" });
+          .send({ message: "Invalid item ID" });
       } else {
         res
           .status(DEFAULT_ERROR.error)
@@ -80,20 +85,16 @@ const deleteItem = (req, res) => {
 };
 
 const likeItem = (req, res) => {
-  const { itemId } = req.params;
-  const { _id: userId } = req.user;
-
   ClothingItem.findByIdAndUpdate(
-    itemId,
-    { $addToSet: { likes: userId } },
+    req.params.itemId,
+    { $addToSet: { likes: req.user._id } },
     { new: true }
   )
-    .orFail()
     .then((item) => {
       if (!item) {
         res.status(NOTFOUND_ERROR.error).send({ message: "Item not found" });
       } else {
-        res.send({ data: item });
+        res.status(200).send({ message: "Item liked" });
       }
     })
     .catch((err) => {
@@ -110,20 +111,16 @@ const likeItem = (req, res) => {
 };
 
 const dislikeItem = (req, res) => {
-  const { itemId } = req.params;
-  const { _id: userId } = req.user;
-
   ClothingItem.findByIdAndUpdate(
-    itemId,
-    { $pull: { likes: userId } },
+    req.params.itemId,
+    { $pull: { likes: req.user._id } },
     { new: true }
   )
-    .orFail()
     .then((item) => {
       if (!item) {
         res.status(NOTFOUND_ERROR.error).send({ message: "Item not found" });
       } else {
-        res.send({ data: item });
+        res.status(200).send({ message: "Item disliked" });
       }
     })
     .catch((err) => {

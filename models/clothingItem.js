@@ -14,7 +14,7 @@ const clothingItem = new mongoose.Schema({
     required: true,
     enum: ["hot", "warm", "cold"],
   },
-  imageURL: {
+  imageUrl: {
     type: String,
     required: true,
     validate: {
@@ -30,8 +30,8 @@ const clothingItem = new mongoose.Schema({
     required: true,
   },
   likes: {
-    type: [{ type: mongoose.Schema.Types.ObjectId, ref: "user" }],
-    default: [],
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "user",
   },
   createdAt: {
     type: Date,
