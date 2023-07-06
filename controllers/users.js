@@ -1,5 +1,7 @@
 const bcrypt = require("bcryptjs");
+
 const jwt = require("jsonwebtoken");
+
 const User = require("../models/user");
 
 const {
@@ -94,10 +96,21 @@ const login = (req, res) => {
 
   User.findUserByCredentials(email, password)
     .then((user) => {
-      res.send({
-        token: jwt.sign({ _id: user._id }, JWT_SECRET, {
+      if (!user) {
+        return res
+          .staus(UNAUTHORIZED_ERROR.error)
+          .send({ message: "Email or Passowrd not found" });
+      }
+      return bcrypt.compare(password, user.password).then((matched) => {
+        if (!matched) {
+          res
+            .status(UNAUTHORIZED_ERROR.error)
+            .send({ message: "Email or Password not found" });
+        }
+        const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
           expiresIn: "7d",
-        }),
+        });
+        res.send({ token });
       });
     })
     .catch((err) => {
@@ -109,9 +122,7 @@ const login = (req, res) => {
 };
 
 const getCurrentUser = (req, res) => {
-  const { _id: userId } = req.user;
-
-  User.findById(userId)
+  User.findById(req.user._id)
     .then((user) => {
       if (!user) {
         res.status(NOTFOUND_ERROR.error).send({ message: "User not found" });
@@ -119,8 +130,8 @@ const getCurrentUser = (req, res) => {
         res.send({ data: user });
       }
     })
-
     .catch((err) => {
+      console.log(err);
       if (err.name === "CastError") {
         res
           .status(INVALID_DATA_ERROR.error)
@@ -139,8 +150,12 @@ const updateProfile = (req, res) => {
     { name, avatar },
     { new: true, runValidators: true }
   )
-    .orFail()
-    .then((user) => res.send({ data: user }))
+    .then((user) => {
+      if (!user) {
+        res.status(NOTFOUND_ERROR.error).send({ message: "User not found" });
+      }
+      res.send({ data: user });
+    })
     .catch((err) => {
       if (err.name === "ValidationError") {
         res

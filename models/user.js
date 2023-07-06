@@ -1,10 +1,10 @@
+const bcrypt = require("bcryptjs");
+
 const mongoose = require("mongoose");
 
 const validator = require("validator");
 
-const bcrypt = require("bcryptjs");
-
-const user = new mongoose.Schema({
+const userSchema = new mongoose.Schema({
   name: {
     type: String,
     default: "Elise Bouer",
@@ -37,7 +37,7 @@ const user = new mongoose.Schema({
     select: false,
   },
 });
-user.statics.findUserByCredentials = function findUserByCredentials(
+userSchema.statics.findUserByCredentials = function findUserByCredentials(
   email,
   password
 ) {
@@ -55,4 +55,4 @@ user.statics.findUserByCredentials = function findUserByCredentials(
       });
     });
 };
-module.exports = mongoose.model("user", user);
+module.exports = mongoose.model("user", userSchema);

@@ -55,6 +55,21 @@ Create an authorization middleware
 404 — there is no user or clothing item with the requested id, or the request was sent to a non-existent address.
 500 — default error. Accompanied by the message: "An error has occurred on the server."
 
+### expand the user schema
+
+The user will sign up using their email address and password. Each user's email will be unique and validated against the email schema.
+
+### create routes and controllers for signing up, signing in, and modifying the current user data
+
+- Update the createUser controller
+- Create the login controller
+- Add routes and controllers for signing up and signing in
+- Create middleware for authorization
+- Add a controller and route to get the user data
+- Add a controller and route to modify the user data
+- Configure user rights
+- Install cors
+
 ### Test your project
 
 Check project independently using two new tools: Postman and GitHub Actions
