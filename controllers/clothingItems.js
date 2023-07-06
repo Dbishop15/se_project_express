@@ -2,6 +2,7 @@ const ClothingItem = require("../models/clothingItem");
 
 const {
   INVALID_DATA_ERROR,
+  FORBIDDEN_ERROR,
   NOTFOUND_ERROR,
   DEFAULT_ERROR,
 } = require("../utils/errors");
@@ -64,9 +65,12 @@ const deleteItem = (req, res) => {
   const { itemId } = req.params;
 
   ClothingItem.findByIdAndDelete(itemId)
+    .orFail()
     .then((item) => {
-      if (!item) {
-        res.status(NOTFOUND_ERROR.error).send({ message: "Item not found" });
+      if (!item.owner === req.user._id) {
+        res.status(FORBIDDEN_ERROR.error).send({
+          message: "You do not have the permission to delete this item",
+        });
       } else {
         res.send({ message: "Successfully deleted" });
       }

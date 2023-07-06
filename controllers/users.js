@@ -1,10 +1,16 @@
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 
 const {
   DEFAULT_ERROR,
+  UNAUTHORIZED_ERROR,
   INVALID_DATA_ERROR,
+  CONFLICT_ERROR,
   NOTFOUND_ERROR,
 } = require("../utils/errors");
+
+const { JWT_SECRET } = require("../utils/config");
 
 const getUsers = (req, res) => {
   User.find({})
@@ -48,13 +54,93 @@ const getUser = (req, res) => {
 };
 
 const createUser = (req, res) => {
-  const { name, avatar } = req.body;
-
-  User.create({ name, avatar })
+  const { name, avatar, email, password } = req.body;
+  if (!password) {
+    res
+      .status(UNAUTHORIZED_ERROR.error)
+      .send({ message: "Password is required" });
+  }
+  return bcrypt
+    .hash(password, 10)
+    .then((hash) =>
+      User.create({
+        name,
+        avatar,
+        email,
+        password: hash,
+      })
+    )
     .then((user) => {
-      console.log(user);
-      res.send({ data: user });
+      res.send({ name, avatar, _id: user._id, email: user.email });
     })
+    .catch((err) => {
+      if (err.name === "ValidationError") {
+        res
+          .status(INVALID_DATA_ERROR.error)
+          .send({ message: "Invalid data provided" });
+      } else if (err.code === 11000) {
+        res.status(CONFLICT_ERROR.error).send({
+          message: "This email address is already used with an account",
+        });
+      } else {
+        res
+          .status(DEFAULT_ERROR.error)
+          .send({ message: "An error has occured on the server" });
+      }
+    });
+};
+const login = (req, res) => {
+  const { email, password } = req.body;
+
+  User.findUserByCredentials(email, password)
+    .then((user) => {
+      res.send({
+        token: jwt.sign({ _id: user._id }, JWT_SECRET, {
+          expiresIn: "7d",
+        }),
+      });
+    })
+    .catch((err) => {
+      console.error(err);
+      res
+        .status(UNAUTHORIZED_ERROR.error)
+        .send({ message: "Login is denies due to invalid email or password" });
+    });
+};
+
+const getCurrentUser = (req, res) => {
+  const { _id: userId } = req.user;
+
+  User.findById(userId)
+    .then((user) => {
+      if (!user) {
+        res.status(NOTFOUND_ERROR.error).send({ message: "User not found" });
+      } else {
+        res.send({ data: user });
+      }
+    })
+
+    .catch((err) => {
+      if (err.name === "CastError") {
+        res
+          .status(INVALID_DATA_ERROR.error)
+          .send({ message: "Invalid user ID" });
+      } else {
+        res
+          .status(DEFAULT_ERROR.error)
+          .send({ message: "An error has occured on the server" });
+      }
+    });
+};
+const updateProfile = (req, res) => {
+  const { name, avatar } = req.body;
+  User.findByIdAndUpdate(
+    req.user._id,
+    { name, avatar },
+    { new: true, runValidators: true }
+  )
+    .orFail()
+    .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === "ValidationError") {
         res
@@ -72,4 +158,7 @@ module.exports = {
   getUsers,
   getUser,
   createUser,
+  login,
+  getCurrentUser,
+  updateProfile,
 };
