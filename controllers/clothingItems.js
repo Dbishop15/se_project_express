@@ -63,17 +63,29 @@ const updateItem = (req, res) => {
 
 const deleteItem = (req, res) => {
   const { itemId } = req.params;
+  const { _id: userId } = req.user;
 
-  ClothingItem.findByIdAndDelete(itemId)
-    .orFail()
+  ClothingItem.findOne({ _id: itemId })
     .then((item) => {
-      if (!item.owner === req.user._id) {
-        res.status(FORBIDDEN_ERROR.error).send({
+      if (!item) {
+        return res
+          .status(NOTFOUND_ERROR.error)
+          .send({ message: "Item not found" });
+      }
+      if (!item.owner.equals(userId)) {
+        return res.status(FORBIDDEN_ERROR.error).send({
           message: "You do not have the permission to delete this item",
         });
-      } else {
-        res.send({ message: "Successfully deleted" });
       }
+      return ClothingItem.deleteOne({ _id: itemId, owner: userId })
+        .then(() => {
+          res.send({ message: "Successfully deleted" });
+        })
+        .catch(() => {
+          res
+            .status(DEFAULT_ERROR.error)
+            .send({ message: "An error has occured on the server" });
+        });
     })
     .catch((err) => {
       if (err.name === "CastError") {
