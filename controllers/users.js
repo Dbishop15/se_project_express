@@ -58,7 +58,7 @@ const getUser = (req, res) => {
 const createUser = (req, res) => {
   const { name, avatar, email, password } = req.body;
   if (!password) {
-    res
+    return res
       .status(UNAUTHORIZED_ERROR.error)
       .send({ message: "Password is required" });
   }
