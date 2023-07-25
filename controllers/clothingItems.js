@@ -110,7 +110,7 @@ const likeItem = (req, res) => {
       if (!item) {
         res.status(NOTFOUND_ERROR.error).send({ message: "Item not found" });
       } else {
-        res.send({ message: "Item liked" });
+        res.send({ data: item });
       }
     })
     .catch((err) => {
@@ -136,7 +136,7 @@ const dislikeItem = (req, res) => {
       if (!item) {
         res.status(NOTFOUND_ERROR.error).send({ message: "Item not found" });
       } else {
-        res.send({ message: "Item disliked" });
+        res.send({ data: item });
       }
     })
     .catch((err) => {

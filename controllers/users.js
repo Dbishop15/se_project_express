@@ -59,7 +59,7 @@ const createUser = (req, res) => {
   const { name, avatar, email, password } = req.body;
   if (!password) {
     return res
-      .status(UNAUTHORIZED_ERROR.error)
+      .status(INVALID_DATA_ERROR.error)
       .send({ message: "Password is required" });
   }
   return bcrypt
@@ -73,7 +73,12 @@ const createUser = (req, res) => {
       })
     )
     .then((user) => {
-      res.send({ name, avatar, _id: user._id, email: user.email });
+      res.send({
+        name: user.name,
+        avatar: user.avatar,
+        _id: user._id,
+        email: user.email,
+      });
     })
     .catch((err) => {
       if (err.name === "ValidationError") {
