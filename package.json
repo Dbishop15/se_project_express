@@ -1,21 +1,24 @@
 {
   "name": "se_project_express",
   "version": "1.0.0",
-  "description": "The back-end project is focused on creating a server for the WTWR application. You’ll gain a deeper understanding of how to work with databases, set up security and testing, and deploy web applications on a remote machine. The eventual goal is to create a server with an API and user authorization. ## Running the Project `npm run start` — to launch the server",
+  "description": "Back End for WTWR react project",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "npx eslint .",
     "start": "node app.js",
-    "dev": "nodemon app.js"
+    "dev": "nodemon app.js",
+    "deploy": "pm2 deploy production"
   },
   "author": "Dararat Bishop",
   "license": "ISC",
+  "homepage": "https://wtwr.twilightparadox.com",
   "dependencies": {
     "bcrypt": "^5.1.0",
     "bcryptjs": "^2.4.3",
     "celebrate": "^15.0.1",
     "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "express-rate-limit": "^6.7.0",
     "express-winston": "^4.2.0",
