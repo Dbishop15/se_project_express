@@ -2,8 +2,8 @@
 
 ## Domain
 
-Front end: https://www.wtwr.twilightparadox.com
-Back end: https://api.wtwr.twilightparadox.com
+- Front end: https://www.wtwr.twilightparadox.com
+- Back end: https://api.wtwr.twilightparadox.com
 
 ## Functionality
 
