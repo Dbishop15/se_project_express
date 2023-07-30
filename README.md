@@ -1,5 +1,10 @@
 # WTWR (What to Wear?): Back End
 
+## Domain
+
+Front end: https://www.wtwr.twilightparadox.com
+Back end: https://api.wtwr.twilightparadox.com
+
 ## Functionality
 
 The back-end projects will focus on creating a server for your WTWR project. While working on them, you'll learn how to work with databases, set up security and testing, and deploy your web application on a remote machine. The goal of all this is to create a server with an API and user authorization.
