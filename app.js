@@ -8,6 +8,8 @@ const { errors } = require("celebrate");
 const { errorHandler } = require("./middlewares/error-handler");
 const { requestLogger, errorLogger } = require("./middlewares/logger");
 
+const limiter = require("./utils/limiter");
+
 const { PORT = 3001 } = process.env;
 const cors = require("cors");
 
@@ -22,7 +24,7 @@ mongoose.connect("mongodb://127.0.0.1:27017/wtwr_db", (r) => {
 });
 
 app.use(helmet());
-
+app.use(limiter);
 app.use(express.json());
 app.use(cors());
 

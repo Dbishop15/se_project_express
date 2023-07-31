@@ -16,7 +16,6 @@ const userSchema = new mongoose.Schema({
     type: String,
     default:
       "https://practicum-content.s3.us-west-1.amazonaws.com/software-engineer/wtwr-project/Elise.png",
-
     validate: {
       validator(value) {
         if (value === null || value === "") return true;
@@ -40,6 +39,7 @@ const userSchema = new mongoose.Schema({
     select: false,
   },
 });
+
 userSchema.statics.findUserByCredentials = function findUserByCredentials(
   email,
   password
@@ -58,4 +58,5 @@ userSchema.statics.findUserByCredentials = function findUserByCredentials(
       });
     });
 };
+
 module.exports = mongoose.model("user", userSchema);
