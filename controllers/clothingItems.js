@@ -4,9 +4,6 @@ const ForbiddenError = require("../errors/ForbiddenError");
 const NotFoundError = require("../errors/NotFoundError");
 
 const createItem = (req, res, next) => {
-  console.log(req);
-  console.log(req.body);
-
   const { name, weather, imageUrl } = req.body;
   const owner = req.user._id;
 
@@ -23,12 +20,10 @@ const createItem = (req, res, next) => {
     });
 };
 
-const getItems = (req, res) => {
+const getItems = (req, res, next) => {
   ClothingItem.find({})
     .then((items) => res.send(items))
-    .catch((err) => {
-      next(err);
-    });
+    .catch(next);
 };
 
 const updateItem = (req, res, next) => {

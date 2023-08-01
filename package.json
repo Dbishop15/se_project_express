@@ -8,6 +8,7 @@
     "lint": "npx eslint .",
     "start": "node app.js",
     "dev": "nodemon app.js",
+    "lint:fix": "npx eslint --fix .",
     "deploy": "pm2 deploy production"
   },
   "author": "Dararat Bishop",
@@ -28,10 +29,13 @@
     "winston": "^3.10.0"
   },
   "devDependencies": {
-    "eslint": "^8.43.0",
+    "@typescript-eslint/eslint-plugin": "^6.2.1",
+    "@typescript-eslint/parser": "^6.2.1",
+    "eslint": "^8.46.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-react": "^7.33.1",
     "nodemon": "^2.0.22",
     "prettier": "^2.8.8"
   }

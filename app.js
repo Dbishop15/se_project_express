@@ -5,23 +5,21 @@ const express = require("express");
 const mongoose = require("mongoose");
 const { errors } = require("celebrate");
 
+const cors = require("cors");
+const helmet = require("helmet");
+
 const { errorHandler } = require("./middlewares/error-handler");
 const { requestLogger, errorLogger } = require("./middlewares/logger");
 
 const limiter = require("./utils/limiter");
 
 const { PORT = 3001 } = process.env;
-const cors = require("cors");
 
 const routes = require("./routes");
 
 const app = express();
 
-const helmet = require("helmet");
-
-mongoose.connect("mongodb://127.0.0.1:27017/wtwr_db", (r) => {
-  console.log("connected to DB", r);
-});
+mongoose.connect("mongodb://127.0.0.1:27017/wtwr_db");
 
 app.use(helmet());
 app.use(limiter);
@@ -42,7 +40,4 @@ app.use(errorLogger);
 app.use(errors());
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-  console.log(`App listening at port ${PORT}`);
-  console.log("This is working");
-});
+app.listen(PORT);

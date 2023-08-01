@@ -16,7 +16,7 @@ const getUsers = (req, res, next) => {
         res.send({ data: users });
       }
     })
-    .catch((next) => {
+    .catch((err) => {
       next(err);
     });
 };
@@ -67,7 +67,7 @@ const createUser = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === "ValidationError") {
-        return next(new BadRequestError("Invalid data provided"));
+        next(new BadRequestError("Invalid data provided"));
       } else if (err.code === 11000) {
         next(
           new ConFlictError(
@@ -97,7 +97,8 @@ const login = (req, res, next) => {
         res.send({ token });
       });
     })
-    .catch((next) => {
+    .catch(() => {
+      np;
       next(
         new UnauthorizedError(
           "Login is denies due to invalid email or password"
