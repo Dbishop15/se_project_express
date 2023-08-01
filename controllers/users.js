@@ -98,7 +98,6 @@ const login = (req, res, next) => {
       });
     })
     .catch(() => {
-      np;
       next(
         new UnauthorizedError(
           "Login is denies due to invalid email or password"
