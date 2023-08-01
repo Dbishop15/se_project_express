@@ -11,7 +11,7 @@ const getUsers = (req, res, next) => {
   User.find({})
     .then((users) => {
       if (!users) {
-        return next(new NotFoundError("User not found"));
+        next(new NotFoundError("User not found"));
       } else {
         res.send({ data: users });
       }
@@ -27,14 +27,14 @@ const getUser = (req, res, next) => {
   User.findById(userId)
     .then((user) => {
       if (!user) {
-        return next(new NotFoundError("User not found"));
+        next(new NotFoundError("User not found"));
       } else {
         res.send({ data: user });
       }
     })
     .catch((err) => {
       if (err.name === "CastError") {
-        return next(new BadRequestError("Invalid user ID"));
+        next(new BadRequestError("Invalid user ID"));
       } else {
         next(err);
       }
@@ -45,7 +45,7 @@ const createUser = (req, res, next) => {
   const { name, avatar, email, password } = req.body;
 
   if (!password) {
-    return next(new BadRequestError("Password is required"));
+    next(new BadRequestError("Password is required"));
   }
   return bcrypt
     .hash(password, 10)
@@ -69,7 +69,7 @@ const createUser = (req, res, next) => {
       if (err.name === "ValidationError") {
         return next(new BadRequestError("Invalid data provided"));
       } else if (err.code === 11000) {
-        return next(
+        next(
           new ConFlictError(
             "This email address is already used with an account"
           )
@@ -89,7 +89,7 @@ const login = (req, res, next) => {
       }
       return bcrypt.compare(password, user.password).then((matched) => {
         if (!matched) {
-          return next(new UnauthorizedError("Email or Password not found"));
+          next(new UnauthorizedError("Email or Password not found"));
         }
         const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
           expiresIn: "7d",
@@ -98,7 +98,7 @@ const login = (req, res, next) => {
       });
     })
     .catch((next) => {
-      return next(
+      next(
         new UnauthorizedError(
           "Login is denies due to invalid email or password"
         )
@@ -110,15 +110,14 @@ const getCurrentUser = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => {
       if (!user) {
-        return next(new NotFoundError("User not found"));
+        next(new NotFoundError("User not found"));
       } else {
         res.send({ data: user });
       }
     })
     .catch((err) => {
-      console.log(err);
       if (err.name === "CastError") {
-        return next(new BadRequestError("Invalid user ID"));
+        next(new BadRequestError("Invalid user ID"));
       } else {
         next(err);
       }
@@ -135,13 +134,13 @@ const updateProfile = (req, res, next) => {
   )
     .then((user) => {
       if (!user) {
-        return next(new NotFoundError("User not found"));
+        next(new NotFoundError("User not found"));
       }
       res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === "ValidationError") {
-        return next(new BadRequestError("Invalid data provided"));
+        next(new BadRequestError("Invalid data provided"));
       } else {
         next(err);
       }

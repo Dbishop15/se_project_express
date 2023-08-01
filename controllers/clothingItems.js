@@ -16,7 +16,7 @@ const createItem = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === "ValidationError") {
-        return next(new BadRequestError("Invalid data provided"));
+        next(new BadRequestError("Invalid data provided"));
       } else {
         next(err);
       }
@@ -40,7 +40,7 @@ const updateItem = (req, res, next) => {
     .then((item) => res.send({ data: item }))
     .catch((err) => {
       if (err.name === "ValidationError") {
-        return next(new BadRequestError("Invalid data provided"));
+        next(new BadRequestError("Invalid data provided"));
       } else {
         next(err);
       }
@@ -69,7 +69,7 @@ const deleteItem = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === "CastError") {
-        return next(new BadRequestError("Invalid data provided"));
+        next(new BadRequestError("Invalid data provided"));
       } else {
         next(err);
       }
@@ -84,14 +84,14 @@ const likeItem = (req, res, next) => {
   )
     .then((item) => {
       if (!item) {
-        return next(new NotFoundError("Item not found"));
+        next(new NotFoundError("Item not found"));
       } else {
         res.send({ data: item });
       }
     })
     .catch((err) => {
       if (err.name === "CastError") {
-        return next(new BadRequestError("Invalid data provided"));
+        next(new BadRequestError("Invalid data provided"));
       } else {
         next(err);
       }
@@ -106,14 +106,14 @@ const dislikeItem = (req, res, next) => {
   )
     .then((item) => {
       if (!item) {
-        return next(new NotFoundError("Item not found"));
+        next(new NotFoundError("Item not found"));
       } else {
         res.send({ data: item });
       }
     })
     .catch((err) => {
       if (err.name === "CastError") {
-        return next(new BadRequestError("Invalid data provided"));
+        next(new BadRequestError("Invalid data provided"));
       } else {
         next(err);
       }
